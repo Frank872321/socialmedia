@@ -1,0 +1,36 @@
+<div class="info">
+<p>{{username}}
+<p>{{self_introduction}}<p>
+</div>
+{%if username != request.user.get_username and request.user.is_authenticated %}
+<div class="follow">
+    <button>Follow</button>
+    <button>Unfollow</button> 
+</div>
+{%endif%}
+{%for query in post %}
+    <div class="post">
+        <p>{{username}} - {{query.created_at}}</p>
+        <textarea readonly>{{query.body}}</textarea>
+    </div>
+    {% endfor %}
+<style>
+    .post{
+        textarea {
+            border: none;
+            outline:none;
+            resize: none;
+            border-radius: 5px;
+        }
+        background-color: white;
+        border-radius: 5px;
+        border: solid;
+        border-width: 1px;
+    }
+    body{
+        background-color: lightgray;
+    }
+    .info{
+        background-color: white;
+    }
+</style>

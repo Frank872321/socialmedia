@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src='https://8x8.vc/vpaas-magic-cookie-e23c627cc8bf430fa8a73426d2f7bbbc/external_api.js' async></script>
+    <style>html, body, #jaas-container { height: 100%; width: 80%;}</style>
+    <script type="text/javascript">
+      window.onload = () => {
+        const api = new JitsiMeetExternalAPI("8x8.vc", {
+          roomName: "vpaas-magic-cookie-e23c627cc8bf430fa8a73426d2f7bbbc/6-16MeetingRoom",
+          parentNode: document.querySelector('#jaas-container'),
+                        // Make sure to include a JWT if you intend to record,
+                        // make outbound calls or use any other premium features!
+                        // jwt: "eyJraWQiOiJ2cGFhcy1tYWdpYy1jb29raWUtZTIzYzYyN2NjOGJmNDMwZmE4YTczNDI2ZDJmN2JiYmMvZjBlMTdmLVNBTVBMRV9BUFAiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6ImNoYXQiLCJpYXQiOjE3MzAzMzM1MTAsImV4cCI6MTczMDM0MDcxMCwibmJmIjoxNzMwMzMzNTA1LCJzdWIiOiJ2cGFhcy1tYWdpYy1jb29raWUtZTIzYzYyN2NjOGJmNDMwZmE4YTczNDI2ZDJmN2JiYmMiLCJjb250ZXh0Ijp7ImZlYXR1cmVzIjp7ImxpdmVzdHJlYW1pbmciOmZhbHNlLCJvdXRib3VuZC1jYWxsIjpmYWxzZSwic2lwLW91dGJvdW5kLWNhbGwiOmZhbHNlLCJ0cmFuc2NyaXB0aW9uIjpmYWxzZSwicmVjb3JkaW5nIjpmYWxzZX0sInVzZXIiOnsiaGlkZGVuLWZyb20tcmVjb3JkZXIiOmZhbHNlLCJtb2RlcmF0b3IiOnRydWUsIm5hbWUiOiJUZXN0IFVzZXIiLCJpZCI6Imdvb2dsZS1vYXV0aDJ8MTE2NzkwMTc0OTM2NTE4MDc0ODA5IiwiYXZhdGFyIjoiIiwiZW1haWwiOiJ0ZXN0LnVzZXJAY29tcGFueS5jb20ifX0sInJvb20iOiIqIn0.VkYJPF9dvVwpN1RLGdo-PNNeQeqhLlVB8fx8ccGGEfVxQxUAn45-L0u14bDvk6dStcrsO18XZaOrVpXyK7WsMBcSbi2f_6SqH5L897id_Z9f8g7ezYqjLlO0zJR3nhlA601REqpLxIq3WtbrXrieOhhP7CsuhYeAXFNZUQViYEScnHU3uF0TUFVkKJ4nwVUlU9pvUpzzGKhJU7y04OeLC6NYLisnSQqAhUl-pNsOaFIb_sl06RQVWW2taapwqsejUYLT0pNnNG6Imfwq43GbkPzS6Im0lKihoJbOwWJE6Fqbrn8Ju08SKONjWPbJXBZDiDe2VKBTlq0i4GcowtFYeA"
+        });
+      }
+    </script>
+  </head>
+  <body>    
+    <div class="navbar">
+    <li><a href="/">Home</a></li>
+    <li><a href="/profiles">All users</a></li>
+    <div class="hello">
+        {%if request.user.is_authenticated%}
+        <li>Hello, {{ user }}</li>
+        <a href="/logout">Đăng xuất</a>
+        {%else%}
+            <li><a href="/login">Đăng nhập</a></li>
+            <li><a href="/register">Đăng ký</a></li>
+        {%endif%}
+    </div>
+    </div>
+    <div id="jaas-container" /></div>
+    <div class="info">
+        <iframe src="https://padlet.com/hknmmusic123/t-i-li-u-h-c-t-p-ipd09qayz3e5t2ou" height="689" width="860"></iframe>
+    </div>
+</body>
+</html>
+<style>
+    body{
+        margin-bottom: -70%;
+        margin-left: -2%;
+    }
+        .info{
+            margin-left:70%;
+            margin-top: -689px;
+        }
+        .navbar{
+        background-color: white;
+        margin-left: 30px;
+        margin-bottom: 10px;
+        width: 156%;
+        position: top;
+            li{
+                display: inline;
+                margin:5px;
+            }
+            .hello{
+                float:right;
+            }
+        }
+    #jaas-container{
+        height:689px;
+        margin-top: 0px;
+        width: 70%;
+    }
+</style>
