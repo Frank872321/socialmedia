@@ -1,0 +1,192 @@
+
+{% block title %}{{ room.name }} | {% endblock %}
+
+{% block content %}
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+<style>
+.sidebar {
+    position: fixed; /* Makes it fixed to the viewport */
+    left: 0; /* Aligns it to the left */
+    top: 0; /* Starts at the top of the page */
+    width: 25%; /* Adjust the width as needed */
+    height: 100vh; /* Full height of the viewport */
+    background-color: #f3f3f3; /* Set a background color for the sidebar */
+    overflow-y: auto; /* Allows scrolling if the content overflows */
+    padding: 20px; /* Add some padding for spacing */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.chatarea {
+    margin-left: 30%; /* Leaves space for the fixed sidebar */
+    width: 70%; /* Adjust width to fit beside the sidebar */
+    display: flex;
+    flex-direction: column;
+    height: 90vh; /* Adjust as necessary for height */
+}
+.chat-messages{        
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    height: 80%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column; /* Ensures messages are stacked vertically */
+    gap: 10px; /* Adds space between messages */
+}
+.bubble {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 20%;
+    word-wrap: break-word;
+    margin: 5px 0;
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+.bubble.self {
+    background-color: blue;
+    color: white;
+    align-self: flex-end; 
+}
+.bubble.other {
+    background-color: lightgray;
+    align-self: flex-start; 
+}
+</style>
+<div class="sidebar">
+<div class="p-10 lg:p-20 text-center">
+    <h1 class="text-3xl lg:text-6xl text-white">Rooms</h1>
+</div>
+
+<div class="w-full flex flex-wrap items-center">
+    {% for room in rooms %}
+        <div class="w-full lg:w-1/4 px-3 py-3">
+            <div class="p-4 bg-white shadow rounded-xl text-center">
+                <h2 class="mb-5 text-2xl font-semibold">{{ room.name }}</h2>
+
+                <a href="{% url 'room' room.slug %}" class="px-5 py-3 block rounded-xl text-white bg-teal-600 hover:bg-teal-700">Join</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<h1>Private</h1>
+{% for room in invited %}
+<div class="w-full lg:w-1/4 px-3 py-3">
+    <div class="p-4 bg-white shadow rounded-xl text-center">
+        <h2 class="mb-5 text-2xl font-semibold">{{ room.name }}</h2>
+
+        <a href="{% url 'room' room.slug %}" class="px-5 py-3 block rounded-xl text-white bg-teal-600 hover:bg-teal-700">Join</a>
+    </div>
+</div>
+{% endfor %}
+</div>
+<div class="chatarea">
+<div class="p-10 lg:p-20 text-center">
+    <h1 class="text-3xl lg:text-6xl text-white">{{ room.name }}</h1>
+</div>
+<div class="chat-messages space-y-3" id="chat-messages">
+    {% for m in messages %}
+    <div class="bubble {% if m.user.username == request.user.username %}self{% else %}other{% endif %}">
+        <b>{{ m.user.username }}</b>: {{ m.content }}<br>
+    </div>
+    {% endfor %}
+</div>
+<div class="lg:w-2/4 mt-6 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
+    <form method="post" action="." class="flex">
+        {% csrf_token %}
+        <input type="text" name="content" class="flex-1 mr-3" placeholder="Your message..." id="chat-message-input">
+        <button 
+            class="px-5 py-3 rounded-xl text-white bg-teal-600 hover:bg-teal-700"
+            id="chat-message-submit"
+        >Submit</button>
+    </form>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ room.slug|json_script:"json-roomname" }}
+{{ request.user.username|json_script:"json-username" }}
+{{ word|json_script:"my-list" }}
+
+<script>
+    const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
+    const userName = JSON.parse(document.getElementById('json-username').textContent);
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/'
+        + roomName
+        + '/'
+    );
+
+    chatSocket.onclose = function(e) {
+        console.log('onclose')
+    }
+
+    chatSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    if (data.message) {
+        const chatMessages = document.querySelector('#chat-messages');
+
+        // Determine the correct class
+        const bubbleClass = data.username === userName ? 'self' : 'other';
+
+        // Create a new message bubble
+        const messageBubble = document.createElement('div');
+        messageBubble.className = `bubble ${bubbleClass}`;
+        messageBubble.innerHTML = `<b>${data.username}</b>: ${data.message}<br>`;
+
+        // Append the message bubble
+        chatMessages.appendChild(messageBubble);
+    }
+        scrollToBottom();
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    // document.querySelector('#chat-message-input').onkeyup = function(e) {
+    //     if (e.keyCode === 13) {
+    //         document.querySelector('#chat-message-submit').click();
+    //     }
+    // };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        e.preventDefault()
+
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+
+        console.log({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        })
+
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        }));
+
+        messageInputDom.value = '';
+
+        return false
+    };
+
+    /**
+    * A function for finding the messages element, and scroll to the bottom of it.
+    */
+    function scrollToBottom() {
+        let objDiv = document.getElementById("chat-messages");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+    // Add this below the function to trigger the scroll on load.
+    scrollToBottom();
+</script>
+{% endblock %}

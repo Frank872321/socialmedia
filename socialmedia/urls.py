@@ -21,11 +21,13 @@ from user.views import Login, logout_view
 from call.views import call
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main, name="home"),
     path('profile/<str:user_id>', profiles),
     path('login/',Login.as_view(), name="login"),
     path('logout/', logout_view, name = 'Logout'),
-    path('meet/', call, name="meet")
+    path('meet/', call, name="meet"),
+    path('rooms/', include('ChitChat.urls')),
 ]
