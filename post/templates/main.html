@@ -47,7 +47,7 @@
         <div class="post">
             <div class="post-header">
                 <div class="user-info">
-                    <img src="{{ query.user.profile.image_url }}" alt="{{ query.user.username }}'s Profile" class="user-image">
+                    <img src="media/{{ query.user.profile.image }}" alt="{{ query.user.username }}'s Profile" class="user-image">
                     <div>
                         <a href="profile/{{ query.user }}">{{ query.name }}</a>
                         <p>{{ query.created_at }}</p>

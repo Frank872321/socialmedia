@@ -3,9 +3,11 @@ from django.contrib.auth.models import User, AbstractUser
 from django.db.models.signals import post_save
 import django.utils
 import django.utils.timesince
+from django.core.exceptions import SuspiciousFileOperation
 import django.utils.timezone
 import datetime
 import os
+import socialmedia.settings as settings
 def rename_image(instance, filename):
     """
     Rename the uploaded image file to the username of the user.
@@ -40,31 +42,32 @@ class Profile(models.Model):
     )
     self_introduction = models.TextField(default=" ", blank=True, null = True)
     name = models.CharField(max_length=250, default ="" )
-    image = models.ImageField(upload_to=rename_image, default="/default.png", null=True)
+    image = models.ImageField(upload_to=rename_image, default=settings.MEDIA_ROOT + "/images/default.png", null=True)
     bg_image = models.ImageField(upload_to=rename_bg_image, null=True)
     def __str__(self):
         return self.user.username
-    def save(self, *args, **kwargs):
-        """
-        Override save to delete the old image if it exists and a new image is uploaded.
-        """
-        if self.pk:  # Ensure the object already exists
+def save(self, *args, **kwargs):
+    if self.pk:  # Check if this is an update to an existing object
+        old_image = Post.objects.get(pk=self.pk).image
+        if old_image and old_image != self.image:  # If the image is being updated
             try:
-                old_image = Profile.objects.get(pk=self.pk).image
-                if old_image and old_image != self.image:  # Check if the image is different
-                    old_image_path = old_image.path
-                    if os.path.exists(old_image_path):
-                        os.remove(old_image_path)
-            except Profile.DoesNotExist:
-                pass  # Handle the case where no previous instance exists
-        super().save(*args, **kwargs)
+                old_image_path = old_image.path
+                # Ensure the path is within MEDIA_ROOT
+                if not old_image_path.startswith(settings.MEDIA_ROOT):
+                    raise SuspiciousFileOperation(f"Path {old_image_path} is outside of MEDIA_ROOT.")
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
+            except SuspiciousFileOperation:
+                # Handle the case where the file operation is suspicious
+                pass
+    super().save(*args, **kwargs)
     def image_url(self):
         """
         Return the URL of the image or a default image if none exists.
         """
         if self.image and self.image.url:
             return self.image.url
-        return '/media/defaults/default_profile.png'  # Path to the default image
+        return '/media/img/default.png'  # Path to the default image
 def create_profile(sender, instance, created, **kwargs):
     if created:
         user_profile = Profile(user=instance)
