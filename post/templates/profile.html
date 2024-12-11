@@ -1,36 +1,225 @@
-<div class="info">
-<p>{{username}}
-<p>{{self_introduction}}<p>
-</div>
-{%if username != request.user.get_username and request.user.is_authenticated %}
-<div class="follow">
-    <button>Follow</button>
-    <button>Unfollow</button> 
-</div>
-{%endif%}
-{%for query in post %}
-    <div class="post">
-        <p>{{username}} - {{query.created_at}}</p>
-        <textarea readonly>{{query.body}}</textarea>
+<div class="profile-header">
+    <div class="profile-banner">
+        <img src="/media/{{ profile.bg_image }}">
     </div>
+    <div class="profile-info">
+        <div class="profile-picture">
+            <img src="/media{{ profile.image }}" alt="{{ name }}'s Profile Picture">
+        </div>
+        <div class="profile-details">
+            <h2>{{ name }}</h2>
+            <p class="username">@{{ username }}</p>
+            <p class="self-introduction">{{ profile.self_introduction_html|safe }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="posts">
+    {% for query in posts %}
+        <div class="post">
+            <div class="post-header">
+                <span class="post-user">{{ username }} - {{ query.created_at }}</span>
+            </div>
+            <div class="post-body">{{ query.body_html|safe }}</div>
+        </div>
     {% endfor %}
+</div>
 <style>
-    .post{
-        textarea {
-            border: none;
-            outline:none;
-            resize: none;
-            border-radius: 5px;
-        }
-        background-color: white;
-        border-radius: 5px;
-        border: solid;
-        border-width: 1px;
-    }
-    body{
-        background-color: lightgray;
-    }
-    .info{
-        background-color: white;
-    }
+    body {
+    background-color: #f0f2f5;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Profile Header Styling */
+.profile-header {
+    background-color: #ffffff;
+    padding: 0;
+}
+
+.profile-banner img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+}
+
+.profile-info-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: -20px auto 20px;
+    width: 90%;
+    max-width: 800px;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 20px;
+}
+
+.profile-picture img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profile-details {
+    flex: 1;
+}
+
+.profile-details h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.profile-details .username {
+    font-size: 18px;
+    color: #0061F2;
+    margin-top: 5px;
+}
+
+.profile-details .self-introduction {
+    font-size: 16px;
+    color: #555;
+    margin-top: 10px;
+}
+
+/* Follow Buttons */
+.follow {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.follow-btn, .unfollow-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.follow-btn {
+    background-color: #0061F2;
+    color: white;
+}
+
+.follow-btn:hover {
+    background-color: #004bbf;
+}
+
+.unfollow-btn {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.unfollow-btn:hover {
+    background-color: #cc0000;
+}
+
+/* Post Section Styling */
+.posts {
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.post {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.post-header {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.post textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    resize: none;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    color: #333;
+}
+
+.post textarea:focus {
+    outline: none;
+    border-color: #0061F2;
+}
+
+/* Post Actions (Like, Comment, Share Buttons) */
+.post-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.post-actions button {
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    color: #0061F2;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.post-actions button:hover {
+    color: #004bbf;
+}
+    .post-body, .self-introduction {
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    margin-top: 10px;
+}
+
+.post-body h1, .self-introduction h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.post-body h2, .self-introduction h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.post-body p, .self-introduction p {
+    margin: 10px 0;
+}
+
+.post-body a, .self-introduction a {
+    color: #0061F2;
+    text-decoration: none;
+}
+
+.post-body a:hover, .self-introduction a:hover {
+    text-decoration: underline;
+}
+
+.post-body ul, .self-introduction ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.post-body li, .self-introduction li {
+    margin: 5px 0;
+}
 </style>

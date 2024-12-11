@@ -17,15 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from post.views import main, profiles
-from user.views import Login, logout_view
+from user.views import Login, logout_view, register
+from user.views import update_profile
 from call.views import call
 from django.contrib.auth import views as auth_views
-
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main, name="home"),
-    path('profile/<str:user_id>', profiles),
+    path('profile/<str:user_id>', profiles, name="profile"),
     path('login/',Login.as_view(), name="login"),
     path('logout/', logout_view, name = 'Logout'),
     path('meet/', call, name="meet"),
+    path('rooms/', include('ChitChat.urls')),
+    path('register/', register, name="register"),
+    path('update-profile/', update_profile, name='update_profile'),
 ]
+if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)

@@ -1,67 +1,105 @@
-
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src='https://8x8.vc/vpaas-magic-cookie-e23c627cc8bf430fa8a73426d2f7bbbc/external_api.js' async></script>
-    <style>html, body, #jaas-container { height: 100%; width: 80%;}</style>
-    <script type="text/javascript">
-      window.onload = () => {
-        const api = new JitsiMeetExternalAPI("8x8.vc", {
-          roomName: "vpaas-magic-cookie-e23c627cc8bf430fa8a73426d2f7bbbc/6-16MeetingRoom",
-          parentNode: document.querySelector('#jaas-container'),
-                        // Make sure to include a JWT if you intend to record,
-                        // make outbound calls or use any other premium features!
-                        // jwt: "eyJraWQiOiJ2cGFhcy1tYWdpYy1jb29raWUtZTIzYzYyN2NjOGJmNDMwZmE4YTczNDI2ZDJmN2JiYmMvZjBlMTdmLVNBTVBMRV9BUFAiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6ImNoYXQiLCJpYXQiOjE3MzAzMzM1MTAsImV4cCI6MTczMDM0MDcxMCwibmJmIjoxNzMwMzMzNTA1LCJzdWIiOiJ2cGFhcy1tYWdpYy1jb29raWUtZTIzYzYyN2NjOGJmNDMwZmE4YTczNDI2ZDJmN2JiYmMiLCJjb250ZXh0Ijp7ImZlYXR1cmVzIjp7ImxpdmVzdHJlYW1pbmciOmZhbHNlLCJvdXRib3VuZC1jYWxsIjpmYWxzZSwic2lwLW91dGJvdW5kLWNhbGwiOmZhbHNlLCJ0cmFuc2NyaXB0aW9uIjpmYWxzZSwicmVjb3JkaW5nIjpmYWxzZX0sInVzZXIiOnsiaGlkZGVuLWZyb20tcmVjb3JkZXIiOmZhbHNlLCJtb2RlcmF0b3IiOnRydWUsIm5hbWUiOiJUZXN0IFVzZXIiLCJpZCI6Imdvb2dsZS1vYXV0aDJ8MTE2NzkwMTc0OTM2NTE4MDc0ODA5IiwiYXZhdGFyIjoiIiwiZW1haWwiOiJ0ZXN0LnVzZXJAY29tcGFueS5jb20ifX0sInJvb20iOiIqIn0.VkYJPF9dvVwpN1RLGdo-PNNeQeqhLlVB8fx8ccGGEfVxQxUAn45-L0u14bDvk6dStcrsO18XZaOrVpXyK7WsMBcSbi2f_6SqH5L897id_Z9f8g7ezYqjLlO0zJR3nhlA601REqpLxIq3WtbrXrieOhhP7CsuhYeAXFNZUQViYEScnHU3uF0TUFVkKJ4nwVUlU9pvUpzzGKhJU7y04OeLC6NYLisnSQqAhUl-pNsOaFIb_sl06RQVWW2taapwqsejUYLT0pNnNG6Imfwq43GbkPzS6Im0lKihoJbOwWJE6Fqbrn8Ju08SKONjWPbJXBZDiDe2VKBTlq0i4GcowtFYeA"
-        });
-      }
-    </script>
-  </head>
-  <body>    
-    <div class="navbar">
-    <li><a href="/">Home</a></li>
-    <li><a href="/profiles">All users</a></li>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jitsi and Padlet</title>
+  <script src='https://8x8.vc/vpaas-magic-cookie-e23c627cc8bf430fa8a73426d2f7bbbc/external_api.js' async></script>
+  <style>
+ body, ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f2f2f2;
+    }
+
+    .navbar {
+        background-color: #ffffff;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .navbar ul {
+        display: flex;
+        list-style-type: none;
+    }
+
+    .navbar ul li {
+        margin-right: 20px;
+    }
+
+    .navbar ul li a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .hello a {
+        margin-left: 10px;
+    }
+
+    .container {
+      display: flex;
+      height: 92.999vh; /* Set the height to the full viewport height */
+    }
+
+    #jaas-container {
+      flex: 1;
+      border-right: 2px solid #ddd;
+      height: 100%;
+    }
+
+    #padlet-container {
+      flex: 1;
+      height: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/profiles">All Users</a></li>
+        <li><a href="{{ link }}">Exit to LQDOJ</a></li>
+        <li><a href="/rooms">Chat</a></li>
+        <li><a href="/meet">Meet</a></li>
+    </ul>
     <div class="hello">
-        {%if request.user.is_authenticated%}
-        <li>Hello, {{ user }}</li>
-        <a href="/logout">Đăng xuất</a>
-        {%else%}
-            <li><a href="/login">Đăng nhập</a></li>
-            <li><a href="/register">Đăng ký</a></li>
-        {%endif%}
+      {% if request.user.is_authenticated %}
+        <span>Hello, {{ user }}</span>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      {% endif %}
     </div>
+  </div>
+  
+  <div class="container">
+    <div id="jaas-container"></div>
+    <div id="padlet-container">
+      <iframe src="https://padlet.com/bangtrinh2306/6-16-o-n-k-t-y-u-th-ng-t-tin-to-s-ng-4ur1pjsatl7ip8xz?utm_source=zalo&utm_medium=zalo&utm_campaign=zalo"></iframe>
     </div>
-    <div id="jaas-container" /></div>
-    <div class="info">
-        <iframe src="https://padlet.com/hknmmusic123/t-i-li-u-h-c-t-p-ipd09qayz3e5t2ou" height="630" width="710"></iframe>
-    </div>
+  </div>
+
+  <script type="text/javascript">
+    window.onload = () => {
+      const api = new JitsiMeetExternalAPI("8x8.vc", {
+        roomName: "vpaas-magic-cookie-e23c627cc8bf430fa8a73426d2f7bbbc/6-16MeetingRoom",
+        parentNode: document.querySelector('#jaas-container'),
+      });
+    };
+  </script>
 </body>
 </html>
-<style>
-    body{
-        margin-bottom: -70%;
-        margin-left: -2%;
-    }
-        .info{
-            margin-left:70%;
-            margin-top: -633px;
-        }
-        .navbar{
-        background-color: white;
-        margin-left: 30px;
-        margin-bottom: 10px;
-        width: 153%;
-        position: top;
-            li{
-                display: inline;
-                margin:5px;
-            }
-            .hello{
-                float:right;
-            }
-        }
-    #jaas-container{
-        height:630px;
-        margin-top: 0px;
-        width: 70%;
-    }
-</style>

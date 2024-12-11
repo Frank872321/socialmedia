@@ -1,69 +1,188 @@
-{%block title%}
-<title>6/16 social media</title>
-{%endblock%}
+{% block title %}
+<title>6/16 Social Media</title>
+{% endblock %}
+
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
 </head>
+
 <body>
     <div class="navbar">
-        <li><a href="/">Home</a></li>
-        <li><a href="/profiles">All users</a></li>
-        <li><a href="{{link}}">Exit to LQDOJ</a></li>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/profiles">All Users</a></li>
+            <li><a href="{{ link }}">Exit to LQDOJ</a></li>
+            <li><a href="/rooms">Chat</a></li>
+            <li><a href="/meet">Meet</a></li>
+        </ul>
         <div class="hello">
-            {%if request.user.is_authenticated%}
-            <li>Hello, {{ user }}</li>
-            <a href="/logout">Đăng xuất</a>
-            {%else%}
-                <li><a href="/login">Đăng nhập</a></li>
-                <li><a href="/register">Đăng ký</a></li>
-            {%endif%}
+            {% if request.user.is_authenticated %}
+                <span>Hello, {{ user }}</span>
+                <a href="/logout">Log Out</a>
+            {% else %}
+                <a href="/login">Log In</a>
+                <a href="/register">Register</a>
+            {% endif %}
         </div>
     </div>
+
     <div class="create_post">
-        <form action='', method="POST">
-            {%csrf_token%}
-        {%if request.user.is_authenticated%}
-        <p>Create a post</p>
-        <textarea placeholder="What's on your mind?" name="content"></textarea>
-        <input type="submit" value="Post">
-        {%else%}
-        <p>Please login to post</p>
-        {%endif%}
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% if request.user.is_authenticated %}
+                <textarea placeholder="What's on your mind?" name="content" id="markdown-editor"></textarea>
+                <input type="submit" value="Post">
+            {% else %}
+                <p>Please login to post</p>
+            {% endif %}
         </form>
     </div>
-    {%for query in posts %}
-    <div class="post">
-        <p><a href="profile/{{ query.user }}">{{query.user}}</a> - {{query.created_at}}</p>
-        <pre>{{query.body}}</pre>
+
+    <div class="posts">
+        {% for query in posts %}
+        <div class="post">
+            <div class="post-header">
+                <div class="user-info">
+                    <img src="{{ query.user.profile.image_url }}" alt="{{ query.user.username }}'s Profile" class="user-image">
+                    <div>
+                        <a href="profile/{{ query.user }}">{{ query.name }}</a>
+                        <p>{{ query.created_at }}</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>{{ query.body_html | safe }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </body>
+
 <style>
-    .navbar{
-        background-color: white;
-        padding: 15px;
-        margin: -10px;
-        li{
-            display: inline;
-            margin:5px;
-        }
-        .hello{
-            float:right;
-        }
+    /* Reset some default styles */
+    body, ul {
+        margin: 0;
+        padding: 0;
     }
-    .post{
-        pre {
-            overflow: auto;
-            height:min-content;
-        }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f2f2f2;
+    }
+
+    .navbar {
+        background-color: #ffffff;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .navbar ul {
+        display: flex;
+        list-style-type: none;
+    }
+
+    .navbar ul li {
+        margin-right: 20px;
+    }
+
+    .navbar ul li a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .hello a {
+        margin-left: 10px;
+    }
+
+    .create_post {
+        padding: 8px;               /* Reduced padding */
         background-color: white;
+        border-radius: 8px;
+        margin-top: 20px;
+        width: 69%;                   /* Width remains 50% */
+        margin-left: 15%;              /* Centered the form */
+        min-height: 120px;            /* Reduced height */
+    }
+
+    .create_post textarea {
+        width: 100%;
+        height: 20%;  /* Shortened height of the textarea */
+        border-radius: 8px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+
+    .create_post input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        background-color: #0061F2;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .posts {
+        width: 70%;
+        margin-left: 15%;
+        margin-top: 20px;
+    }
+
+    .post {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-header {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .user-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .post-content {
+        margin-top: 15px;
+    }
+
+    .post-content p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-top: 10px;
+    }
+
+    .post-content code {
+        background-color: #f4f4f4;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+    }
+
+    .post-content pre {
+        background-color: #f4f4f4;
+        padding: 10px;
         border-radius: 5px;
-        border: solid;
-        border-width: 1px;
-    }
-    body{
-        background-color: lightgray;
+        overflow-x: auto;
     }
 </style>
