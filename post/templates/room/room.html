@@ -1,11 +1,10 @@
-
 {% block title %}{{ room.name }} | {% endblock %}
 
 {% block content %}
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 </head>
 <style>
     a {
@@ -154,8 +153,6 @@ a:hover {
             const formattedMessage = message.replace(urlPattern, function(url) {
                 return `<a href="${url}" target="_blank">${url}</a>`;
             });
-
-            // Fetch preview for the first link in the message
             const firstLink = message.match(urlPattern)[0];
             fetchPreview(firstLink, formattedMessage);
             return formattedMessage;
