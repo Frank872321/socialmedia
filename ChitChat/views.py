@@ -30,6 +30,7 @@ def room(request, slug):
             if i in banned_words:
                 print("Flagged words detected:", i)
                 flag = "true"
+                redirect('home')
 
 
     return render(request, 'room/room.html', {'room': room, 'messages': messages, 'flagged': flag, 'word': banned_words, 'rooms': rooms, 'invited': invited_rooms,'room_slug': slug, })

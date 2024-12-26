@@ -9,7 +9,7 @@ from django.utils.html import mark_safe
 
 # Create your views here.
 def main(request):
-  posts = Post.objects.all()
+  posts = Post.objects.all().order_by('-created_at')
   for post in posts:
         post.body_html = markdown.markdown(post.body, extensions=['extra', 'codehilite'])
   template = loader.get_template('main.html ')

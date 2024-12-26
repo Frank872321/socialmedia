@@ -92,8 +92,9 @@
       <iframe src="https://padlet.com/bangtrinh2306/6-16-o-n-k-t-y-u-th-ng-t-tin-to-s-ng-4ur1pjsatl7ip8xz?utm_source=zalo&utm_medium=zalo&utm_campaign=zalo"></iframe>
     </div>
   </div>
-
+  {{ room.code_|json_script:"room_slug" }}
   <script type="text/javascript">
+    const roomName = JSON.parse(document.getElementById('room_slug').textContent);
     window.onload = () => {
       const api = new JitsiMeetExternalAPI("8x8.vc", {
         roomName: "vpaas-magic-cookie-e23c627cc8bf430fa8a73426d2f7bbbc/6-16MeetingRoom",

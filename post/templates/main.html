@@ -21,7 +21,13 @@
         </ul>
         <div class="hello">
             {% if request.user.is_authenticated %}
-                <span>Hello, {{ user }}</span>
+                <div class="dropdown"> 
+                    <button class="dropbtn">Hello, {{ user }}</button>
+                    <div class="dropdown-content">
+                        <a href="/update-profile">Edit Profile</a><br>
+                        <a href="/profile/{{user}}">Your Profile</a>
+                    </div>
+                </div>
                 <a href="/logout">Log Out</a>
             {% else %}
                 <a href="/login">Log In</a>
@@ -44,25 +50,71 @@
 
     <div class="posts">
         {% for query in posts %}
-        <div class="post">
-            <div class="post-header">
-                <div class="user-info">
-                    <img src="media/{{ query.user.profile.image }}" alt="{{ query.user.username }}'s Profile" class="user-image">
-                    <div>
-                        <a href="profile/{{ query.user }}">{{ query.name }}</a>
-                        <p>{{ query.created_at }}</p>
+            <div class="post">
+                <div class="post-header">
+                    <div class="user-info">
+                        <img src="media/{{ query.user.profile.image }}" alt="{{ query.user.username }}'s Profile" class="user-image">
+                        <div>
+                            <a href="profile/{{ query.user }}">{{ query.name }}</a>
+                            <p>{{ query.created_at }}</p>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>{{ query.body_html | safe }}</p>
                     </div>
                 </div>
-                <div class="post-content">
-                    <p>{{ query.body_html | safe }}</p>
-                </div>
             </div>
-        </div>
         {% endfor %}
     </div>
+
 </body>
 
 <style>
+    /* Reset some default styles */
+    body, ul { margin: 0; padding: 0; }
+    body { font-family: 'Roboto', sans-serif; background-color: #f2f2f2; }
+    .navbar { background-color: #ffffff; padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #e1e1e1; }
+    .navbar ul { display: flex; list-style-type: none; }
+    .navbar ul li { margin-right: 20px; }
+    .navbar ul li a { color: #333; text-decoration: none; font-weight: 500; }
+
+    /* Dropdown Menu Styling */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropbtn {
+        background-color: inherit; /* Inherit background color from parent */
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        max-height: fit-content;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        right: 0; /* Position to the right of the button */
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Rest of the styles remain the same */
+    .create_post { 
+        padding: 8px; 
+        background-color: white;
+        border-radius: 8px;
+        margin-top: 20px;
+        width: 69%; 
+        margin-left: 15%; 
+        min-height: 120px; 
+    }
     /* Reset some default styles */
     body, ul {
         margin: 0;

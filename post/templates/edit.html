@@ -1,4 +1,22 @@
 {% block content %}
+<div class="navbar">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/profiles">All Users</a></li>
+        <li><a href="{{ link }}">Exit to LQDOJ</a></li>
+        <li><a href="/rooms">Chat</a></li>
+        <li><a href="/meet">Meet</a></li>
+    </ul>
+    <div class="hello">
+        {% if request.user.is_authenticated %}
+            <span>Hello, {{ user }}</span>
+            <a href="/logout">Log Out</a>
+        {% else %}
+            <a href="/login">Log In</a>
+            <a href="/register">Register</a>
+        {% endif %}
+    </div>
+</div>
 <div class="profile-update">
     <h2>Update Profile</h2>
     <form method="POST" enctype="multipart/form-data">
@@ -12,6 +30,32 @@
 </div>
 {% endblock %}
 <style>
+    .navbar {
+        background-color: #ffffff;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .navbar ul {
+        display: flex;
+        list-style-type: none;
+    }
+
+    .navbar ul li {
+        margin-right: 20px;
+    }
+
+    .navbar ul li a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .hello a {
+        margin-left: 10px;
+    }
     .profile-update {
         width: 50%;
         margin: auto;

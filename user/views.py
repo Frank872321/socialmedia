@@ -52,11 +52,13 @@ def update_profile(request):
         'profile_form': profile_form
     })
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        # Create a profile only if it doesn't exist
+        Profile.objects.get_or_create(user=instance)
+    else:
+        # Save the profile if it exists
+        if hasattr(instance, 'profile'):
+            instance.profile.save()

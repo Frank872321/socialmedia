@@ -19,7 +19,7 @@ from django.urls import path, include
 from post.views import main, profiles
 from user.views import Login, logout_view, register
 from user.views import update_profile
-from call.views import call
+from call.views import *
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static

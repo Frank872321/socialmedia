@@ -42,8 +42,8 @@ class Profile(models.Model):
     )
     self_introduction = models.TextField(default=" ", blank=True, null = True)
     name = models.CharField(max_length=250, default ="" )
-    image = models.ImageField(upload_to=rename_image, default=settings.MEDIA_ROOT + "/images/default.png", null=True)
-    bg_image = models.ImageField(upload_to=rename_bg_image, null=True)
+    image = models.ImageField(upload_to=rename_image, default=settings.MEDIA_ROOT + "\profiles\images\default.png", null=True)
+    bg_image = models.ImageField(upload_to=rename_bg_image, null=True, default="")
     def __str__(self):
         return self.user.username
 def save(self, *args, **kwargs):
