@@ -44,6 +44,7 @@ class Profile(models.Model):
     name = models.CharField(max_length=250, default ="" )
     image = models.ImageField(upload_to=rename_image, default=settings.MEDIA_ROOT + "\profiles\images\default.png", null=True)
     bg_image = models.ImageField(upload_to=rename_bg_image, null=True, default="")
+    dark_mode = models.BooleanField(default=False)  # Add this field
     def __str__(self):
         return self.user.username
 def save(self, *args, **kwargs):

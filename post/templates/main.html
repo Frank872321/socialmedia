@@ -12,10 +12,15 @@
 
 <body>
     <div class="navbar">
-        <li><a href="/">Home</a></li>
-        <li><a href="/profiles">All users</a></li>
-        <li><a href="lqdoj.edu.vn">Exit to LQDOJ</a></li>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/profiles">All users</a></li>
+            <li><a href="https://lqdoj.edu.vn" target="_blank">Exit to LQDOJ</a></li>
+            <li><a href="/rooms">Chat</a></li>
+            <li><a href="/meet">Meet</a></li>
+        </ul>
         <div class="hello">
+            <button class="btn-toggle">Toggle Dark-Mode</button>
             {% if request.user.is_authenticated %}
                 <div class="dropdown"> 
                     <button class="dropbtn">Hello, {{ user }}</button>
@@ -51,7 +56,7 @@
                     <div class="user-info">
                         <img src="media/{{ query.user.profile.image }}" alt="{{ query.user.username }}'s Profile" class="user-image">
                         <div>
-                            <a href="profile/{{ query.user }}">{{ query.name }}</a>
+                            <a href="/profile/{{ query.user }}">{{ query.name }}</a>
                             <p>{{ query.created_at }}</p>
                         </div>
                     </div>
@@ -66,77 +71,34 @@
 </body>
 
 <style>
-    /* Reset some default styles */
-    body, ul { margin: 0; padding: 0; }
-    body { font-family: 'Roboto', sans-serif; background-color: #f2f2f2; }
-    .navbar { background-color: #ffffff; padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #e1e1e1; }
-    .navbar ul { display: flex; list-style-type: none; }
-    .navbar ul li { margin-right: 20px; }
-    .navbar ul li a { color: #333; text-decoration: none; font-weight: 500; }
-
-    /* Dropdown Menu Styling */
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    .dropbtn {
-        background-color: inherit; /* Inherit background color from parent */
-        border: none;
-        cursor: pointer;
-    }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f9f9f9;
-        min-width: 160px;
-        max-height: fit-content;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        right: 0; /* Position to the right of the button */
-    }
-
-    .dropdown:hover .dropdown-content {
-        display: block;
-    }
-
-    /* Rest of the styles remain the same */
-    .create_post { 
-        padding: 8px; 
-        background-color: white;
-        border-radius: 8px;
-        margin-top: 20px;
-        width: 69%; 
-        margin-left: 15%; 
-        min-height: 120px; 
-    }
-    /* Reset some default styles */
-    body, ul {
-        margin: 0;
-        padding: 0;
-    }
-
     body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f2f2f2;
+        margin: 0; 
+        padding: 0; 
+        font-family: 'Roboto', sans-serif; 
+        background-color: #f2f2f2; 
     }
 
+    /* Navbar styles */
     .navbar {
         background-color: #ffffff;
         padding: 15px 20px;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         border-bottom: 1px solid #e1e1e1;
+        margin: 0; /* Ensure no margin on the navbar */
     }
 
     .navbar ul {
         display: flex;
         list-style-type: none;
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Remove default padding */
     }
 
     .navbar ul li {
         margin-right: 20px;
+        padding-left: 0; /* Remove any padding to the left of the list items */
     }
 
     .navbar ul li a {
@@ -149,19 +111,44 @@
         margin-left: 10px;
     }
 
-    .create_post {
-        padding: 8px;               /* Reduced padding */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropbtn {
+        background-color: inherit;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        right: 0;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .create_post { 
+        padding: 8px; 
         background-color: white;
         border-radius: 8px;
         margin-top: 20px;
-        width: 69%;                   /* Width remains 50% */
-        margin-left: 15%;              /* Centered the form */
-        min-height: 120px;            /* Reduced height */
+        width: 69%; 
+        margin-left: 15%; 
+        min-height: 120px; 
     }
 
     .create_post textarea {
         width: 100%;
-        height: 20%;  /* Shortened height of the textarea */
+        height: 20%;
         border-radius: 8px;
         padding: 5px;
         border: 1px solid #ddd;
@@ -187,14 +174,10 @@
     .post {
         background-color: white;
         padding: 20px;
+        color: #000000;
         border-radius: 8px;
         margin-bottom: 20px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .post-header {
-        display: flex;
-        flex-direction: column;
     }
 
     .user-info {
@@ -210,27 +193,144 @@
         margin-right: 10px;
     }
 
-    .post-content {
-        margin-top: 15px;
+    .hello .dropdown button {
+        color: #000000;
     }
 
-    .post-content p {
-        font-size: 16px;
-        line-height: 1.6;
-        margin-top: 10px;
+    /* Dark theme */
+    body.dark-theme {
+        margin: 0; 
+        padding: 0; 
+        font-family: 'Roboto', sans-serif; 
+        background-color: #23262c;
     }
 
-    .post-content code {
-        background-color: #f4f4f4;
-        padding: 2px 4px;
-        border-radius: 3px;
-        font-family: monospace;
+    body.dark-theme .navbar {
+        background-color: #313131;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #313131;
     }
 
-    .post-content pre {
-        background-color: #f4f4f4;
-        padding: 10px;
-        border-radius: 5px;
-        overflow-x: auto;
+    body.dark-theme .navbar ul {
+        display: flex;
+        list-style-type: none;
+        margin: 0;
+        padding: 0; /* Remove default padding */
+    }
+
+    body.dark-theme .navbar ul li {
+        margin-right: 20px;
+        padding-left: 0; /* Remove any padding to the left of the list items */
+    }
+
+    body.dark-theme .navbar ul li a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    body.dark-theme .hello a {
+        margin-left: 10px;
+    }
+
+    body.dark-theme .hello {
+        color: #ffffff;
+    }
+
+    body.dark-theme .dropdown-content { 
+        display: none;
+        position: absolute;
+        background-color: #313131;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        right: 0;
+    }
+
+    body.dark-theme .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    body.dark-theme .create_post { 
+        padding: 8px; 
+        background-color: #313131;
+        border-radius: 8px;
+        margin-top: 20px;
+        width: 69%; 
+        margin-left: 15%; 
+        min-height: 120px; 
+    }
+
+    body.dark-theme .create_post textarea {
+        width: 100%;
+        height: 20%;
+        border-radius: 8px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+
+    body.dark-theme .create_post input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        background-color: #0061F2;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    body.dark-theme .posts {
+        width: 70%;
+        margin-left: 15%;
+        margin-top: 20px;
+    }
+
+    body.dark-theme .post {
+        background-color: #313131;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px #313131;
+        color: #ffffff;
+    }
+
+    body.dark-theme .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    body.dark-theme .user-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    body.dark-theme .hello .dropdown button {
+        color: #ffffff;
     }
 </style>
+
+<script>
+const btn = document.querySelector(".btn-toggle");
+
+const currentTheme = localStorage.getItem("theme");
+if (currentTheme == "dark") {
+  document.body.classList.add("dark-theme");
+}
+
+btn.addEventListener("click", function () {
+  document.body.classList.toggle("dark-theme");
+
+  let theme = "light";
+  if (document.body.classList.contains("dark-theme")) {
+    theme = "dark";
+  }
+  localStorage.setItem("theme", theme);
+});
+</script>

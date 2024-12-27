@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from .models import Post, Profile
 from django.contrib.auth.models import User, Group
@@ -7,6 +7,13 @@ import markdown
 import markdown2
 from django.utils.html import mark_safe
 
+def toggle_dark_mode(request):
+    if request.method == "POST":
+        profile = request.user.profile
+        profile.dark_mode = not profile.dark_mode  # Toggle value
+        profile.save()
+        return JsonResponse({"dark_mode": profile.dark_mode})
+    return JsonResponse({"error": "Invalid request"}, status=400)
 # Create your views here.
 def main(request):
   posts = Post.objects.all().order_by('-created_at')

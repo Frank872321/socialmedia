@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from post.views import main, profiles
+from post.views import *
 from user.views import Login, logout_view, register
 from user.views import update_profile
 from call.views import *
@@ -33,6 +33,7 @@ urlpatterns = [
     path('rooms/', include('ChitChat.urls')),
     path('register/', register, name="register"),
     path('update-profile/', update_profile, name='update_profile'),
+    path('toggle-dark-mode/', toggle_dark_mode, name='toggle-dark-mode'),
 ]
 if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL,

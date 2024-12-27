@@ -1,3 +1,21 @@
+<div class="hello">
+    <button class="btn-toggle">Toggle Dark-Mode</button>
+    {% if request.user.is_authenticated %}
+        <div class="dropdown"> 
+            <button class="dropbtn">Hello, {{ user }}</button>
+            <div class="dropdown-content">
+                <a href="/update-profile">Edit Profile</a><br>
+                <a href="/profile/{{user}}">Your Profile</a>
+            </div>
+        </div>
+        <a href="/logout">Log Out</a>
+    {% else %}
+        <a href="/login">Log In</a>
+        <a href="/register">Register</a>
+    {% endif %}
+</div>
+</div>
+
 <div class="profile-header">
     <div class="profile-banner">
         <img src="/media/{{ profile.bg_image }}">
