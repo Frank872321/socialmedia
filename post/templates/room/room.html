@@ -1,26 +1,13 @@
+
 {% block title %}{{ room.name }} | {% endblock %}
 
 {% block content %}
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <style>
-    a {
-        color:white;
-    text-decoration: underline;
-}
-
-a:hover {
-    color:white;
-    text-decoration: none;
-}
-    .active-room {
-    background-color: #d1e7dd; /* Light green */
-    border-left: 5px solid #0f5132; /* Darker green border */
-    font-weight: bold;
-}
 .sidebar {
     position: fixed; /* Makes it fixed to the viewport */
     left: 0; /* Aligns it to the left */
@@ -65,9 +52,6 @@ a:hover {
     background-color: blue;
     color: white;
     align-self: flex-end; 
-    a{
-        color:white;
-    }
 }
 .bubble.other {
     background-color: lightgray;
@@ -75,29 +59,31 @@ a:hover {
 }
 </style>
 <div class="sidebar">
-    <div class="p-10 text-center">
-        <h1 class="text-3xl text-black">Rooms</h1>
-    </div>
+<div class="p-10 lg:p-20 text-center">
+    <h1 class="text-3xl lg:text-6xl text-white">Rooms</h1>
+</div>
 
-    <div class="w-full">
-        {% for room in rooms %}
-            <div class="p-4 bg-white shadow rounded-xl text-center 
-                {% if room.slug == room_slug %}active-room{% endif %}">
+<div class="w-full flex flex-wrap items-center">
+    {% for room in rooms %}
+        <div class="w-full lg:w-1/4 px-3 py-3">
+            <div class="p-4 bg-white shadow rounded-xl text-center">
                 <h2 class="mb-5 text-2xl font-semibold">{{ room.name }}</h2>
+
                 <a href="{% url 'room' room.slug %}" class="px-5 py-3 block rounded-xl text-white bg-teal-600 hover:bg-teal-700">Join</a>
             </div>
-        {% endfor %}
-    </div>
-
-    <h1 class="text-xl mt-5">Private</h1>
-    {% for room in invited %}
-    <div class="p-4 bg-white shadow rounded-xl text-center 
-        {% if room.slug == room_slug %}active-room{% endif %}">
-        <h2 class="mb-5 text-2xl font-semibold">{{ room.name }}</h2>
-        <a href="{% url 'room' room.slug %}" class="px-5 py-3 block rounded-xl text-white bg-teal-600 hover:bg-teal-700">Join</a>
-    </div>
+        </div>
     {% endfor %}
 </div>
+<h1>Private</h1>
+{% for room in invited %}
+<div class="w-full lg:w-1/4 px-3 py-3">
+    <div class="p-4 bg-white shadow rounded-xl text-center">
+        <h2 class="mb-5 text-2xl font-semibold">{{ room.name }}</h2>
+
+        <a href="{% url 'room' room.slug %}" class="px-5 py-3 block rounded-xl text-white bg-teal-600 hover:bg-teal-700">Join</a>
+    </div>
+</div>
+{% endfor %}
 </div>
 <div class="chatarea">
 <div class="p-10 lg:p-20 text-center">
@@ -106,7 +92,7 @@ a:hover {
 <div class="chat-messages space-y-3" id="chat-messages">
     {% for m in messages %}
     <div class="bubble {% if m.user.username == request.user.username %}self{% else %}other{% endif %}">
-        <b>{{ m.user.username }}</b>: {{ m.content|urlize|safe }}<br>
+        <b>{{ m.user.username }}</b>: {{ m.content }}<br>
     </div>
     {% endfor %}
 </div>
@@ -127,64 +113,59 @@ a:hover {
 {{ room.slug|json_script:"json-roomname" }}
 {{ request.user.username|json_script:"json-username" }}
 {{ word|json_script:"my-list" }}
+
 <script>
     const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
     const userName = JSON.parse(document.getElementById('json-username').textContent);
-    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + roomName + '/');
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/'
+        + roomName
+        + '/'
+    );
 
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        if (data.message) {
-            const chatMessages = document.querySelector('#chat-messages');
-            const bubbleClass = data.username === userName ? 'self' : 'other';
+    chatSocket.onclose = function(e) {
+        console.log('onclose')
+    }
 
-            const messageBubble = document.createElement('div');
-            messageBubble.className = `bubble ${bubbleClass}`;
-            messageBubble.innerHTML = `<b>${data.username}</b>: ${formatMessage(data.message)}`;
+    chatSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    if (data.message) {
+        const chatMessages = document.querySelector('#chat-messages');
 
-            chatMessages.appendChild(messageBubble);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
+        // Determine the correct class
+        const bubbleClass = data.username === userName ? 'self' : 'other';
+
+        // Create a new message bubble
+        const messageBubble = document.createElement('div');
+        messageBubble.className = `bubble ${bubbleClass}`;
+        messageBubble.innerHTML = `<b>${data.username}</b>: ${data.message}<br>`;
+
+        // Append the message bubble
+        chatMessages.appendChild(messageBubble);
+    }
+        scrollToBottom();
     };
 
-    function formatMessage(message) {
-        const urlPattern = /(\bhttps?:\/\/[^\s]+)/g;
-        if (urlPattern.test(message)) {
-            const formattedMessage = message.replace(urlPattern, function(url) {
-                return `<a href="${url}" target="_blank">${url}</a>`;
-            });
-            const firstLink = message.match(urlPattern)[0];
-            fetchPreview(firstLink, formattedMessage);
-            return formattedMessage;
-        } else {
-            return message;
-        }
-    }
-
-    function fetchPreview(url, bubbleContent) {
-        fetch(`/fetch-preview/?url=${encodeURIComponent(url)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.image) {
-                    const preview = `
-                        <div style="display: flex; align-items: center; margin-top: 5px;">
-                            <img src="${data.image}" alt="Preview" style="width: 50px; height: 50px; margin-right: 10px; border-radius: 5px;">
-                            <div>
-                                <strong>${data.title || 'No title'}</strong><br>
-                                <small>${data.description || ''}</small>
-                            </div>
-                        </div>`;
-                    const chatMessages = document.querySelector('#chat-messages');
-                    chatMessages.lastChild.innerHTML += preview;
-                }
-            })
-            .catch(err => console.error('Error fetching preview:', err));
-    }
+    document.querySelector('#chat-message-input').focus();
+    // document.querySelector('#chat-message-input').onkeyup = function(e) {
+    //     if (e.keyCode === 13) {
+    //         document.querySelector('#chat-message-submit').click();
+    //     }
+    // };
 
     document.querySelector('#chat-message-submit').onclick = function(e) {
-        e.preventDefault();
+        e.preventDefault()
+
         const messageInputDom = document.querySelector('#chat-message-input');
         const message = messageInputDom.value;
+
+        console.log({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        })
 
         chatSocket.send(JSON.stringify({
             'message': message,
@@ -193,6 +174,19 @@ a:hover {
         }));
 
         messageInputDom.value = '';
+
+        return false
     };
+
+    /**
+    * A function for finding the messages element, and scroll to the bottom of it.
+    */
+    function scrollToBottom() {
+        let objDiv = document.getElementById("chat-messages");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+    // Add this below the function to trigger the scroll on load.
+    scrollToBottom();
 </script>
 {% endblock %}

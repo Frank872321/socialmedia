@@ -12,13 +12,9 @@
 
 <body>
     <div class="navbar">
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/profiles">All Users</a></li>
-            <li><a href="{{ link }}">Exit to LQDOJ</a></li>
-            <li><a href="/rooms">Chat</a></li>
-            <li><a href="/meet">Meet</a></li>
-        </ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/profiles">All users</a></li>
+        <li><a href="lqdoj.edu.vn">Exit to LQDOJ</a></li>
         <div class="hello">
             {% if request.user.is_authenticated %}
                 <div class="dropdown"> 

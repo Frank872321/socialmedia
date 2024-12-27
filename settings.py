@@ -11,13 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -27,19 +25,17 @@ SECRET_KEY = 'django-insecure-54p#y)+&cwd2-$^jurz=_$pbf3%m3)a%)$dbn195xkk&35-=zc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'ChitChat.apps.ChitchatConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',
     'django.contrib.staticfiles',
     'post',
     'channels',
@@ -73,13 +69,8 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'socialmedia.asgi.application'
+WSGI_APPLICATION = 'socialmedia.wsgi.application'
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
-}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -132,4 +123,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = 'login/'
+LOGIN_URL = 'https://127.0.0.1/login'
