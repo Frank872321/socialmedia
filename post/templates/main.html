@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 </head>
 
 <body>
@@ -20,7 +22,9 @@
             <li><a href="/meet">Meet</a></li>
         </ul>
         <div class="hello">
-            <button class="btn-toggle">Toggle Dark-Mode</button>
+            <button class="btn-toggle" style="border: 0; background: transparent">
+                <span class="material-icons" id="theme-icon">dark_mode</span>
+            </button>
             {% if request.user.is_authenticated %}
                 <div class="dropdown"> 
                     <button class="dropbtn">Hello, {{ user }}</button>
@@ -30,6 +34,9 @@
                     </div>
                 </div>
                 <a href="/logout">Log Out</a>
+                {% if user.is_superuser %}
+                <a href="/admin">Admin Dashboard</a>
+                {%endif%}
             {% else %}
                 <a href="/login">Log In</a>
                 <a href="/register">Register</a>
@@ -76,35 +83,40 @@
         padding: 0; 
         font-family: 'Roboto', sans-serif; 
         background-color: #f2f2f2; 
+        transition: background-color 0.3s, color 0.3s;
     }
 
-    /* Navbar styles */
-    .navbar {
+        /* Navbar styles */
+        .navbar {
         background-color: #ffffff;
         padding: 15px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid #e1e1e1;
-        margin: 0; /* Ensure no margin on the navbar */
     }
 
     .navbar ul {
         display: flex;
         list-style-type: none;
-        margin: 0; /* Remove default margin */
-        padding: 0; /* Remove default padding */
+        margin: 0;
+        padding: 0;
+        align-items: center;
     }
 
     .navbar ul li {
         margin-right: 20px;
-        padding-left: 0; /* Remove any padding to the left of the list items */
     }
 
     .navbar ul li a {
         color: #333;
         text-decoration: none;
         font-weight: 500;
+    }
+
+    .hello {
+        display: flex;
+        align-items: center;
     }
 
     .hello a {
@@ -134,6 +146,15 @@
 
     .dropdown:hover .dropdown-content {
         display: block;
+    }
+
+    /* Dark theme adjustments */
+    body.dark-theme .navbar ul li a {
+        color: #ffffff;
+    }
+
+    body.dark-theme .hello a {
+        color: #ffffff;
     }
 
     .create_post { 
@@ -202,7 +223,7 @@
         margin: 0; 
         padding: 0; 
         font-family: 'Roboto', sans-serif; 
-        background-color: #23262c;
+        background-color: #181818;
     }
 
     body.dark-theme .navbar {
@@ -212,6 +233,9 @@
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid #313131;
+    }
+    body.dark-theme .navbar .hello .btn-toggle {
+        color: #ffffff
     }
 
     body.dark-theme .navbar ul {
@@ -318,10 +342,12 @@
 
 <script>
 const btn = document.querySelector(".btn-toggle");
+const icon = document.getElementById("theme-icon");
 
 const currentTheme = localStorage.getItem("theme");
-if (currentTheme == "dark") {
+if (currentTheme === "dark") {
   document.body.classList.add("dark-theme");
+  icon.textContent = "light_mode";
 }
 
 btn.addEventListener("click", function () {
@@ -330,6 +356,9 @@ btn.addEventListener("click", function () {
   let theme = "light";
   if (document.body.classList.contains("dark-theme")) {
     theme = "dark";
+    icon.textContent = "light_mode";
+  } else {
+    icon.textContent = "dark_mode";
   }
   localStorage.setItem("theme", theme);
 });

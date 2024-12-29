@@ -1,19 +1,36 @@
-<div class="hello">
-    <button class="btn-toggle">Toggle Dark-Mode</button>
-    {% if request.user.is_authenticated %}
-        <div class="dropdown"> 
-            <button class="dropbtn">Hello, {{ user }}</button>
-            <div class="dropdown-content">
-                <a href="/update-profile">Edit Profile</a><br>
-                <a href="/profile/{{user}}">Your Profile</a>
-            </div>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/profiles">All users</a></li>
+            <li><a href="https://lqdoj.edu.vn" target="_blank">Exit to LQDOJ</a></li>
+            <li><a href="/rooms">Chat</a></li>
+            <li><a href="/meet">Meet</a></li>
+        </ul>
+        <div class="hello">
+            <button class="btn-toggle">Toggle Dark-Mode</button>
+            {% if request.user.is_authenticated %}
+                <div class="dropdown"> 
+                    <button class="dropbtn">Hello, {{ user }}</button>
+                    <div class="dropdown-content">
+                        <a href="/update-profile">Edit Profile</a><br>
+                        <a href="/profile/{{user}}">Your Profile</a>
+                    </div>
+                </div>
+                <a href="/logout">Log Out</a>
+            {% else %}
+                <a href="/login">Log In</a>
+                <a href="/register">Register</a>
+            {% endif %}
         </div>
-        <a href="/logout">Log Out</a>
-    {% else %}
-        <a href="/login">Log In</a>
-        <a href="/register">Register</a>
-    {% endif %}
-</div>
+    </div>
 </div>
 
 <div class="profile-header">
@@ -45,15 +62,81 @@
 <style>
     body {
     background-color: #f0f2f5;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Roboto', sans-serif; 
     margin: 0;
     padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+.navbar {
+        background-color: #ffffff;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e1e1e1;
+        margin: 0; /* Ensure no margin on the navbar */
+    }
+
+    .navbar ul {
+        display: flex;
+        list-style-type: none;
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Remove default padding */
+    }
+
+    .navbar ul li {
+        margin-right: 20px;
+        padding-left: 0; /* Remove any padding to the left of the list items */
+    }
+
+    .navbar ul li a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .hello a {
+        margin-left: 10px;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropbtn {
+        background-color: inherit;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        right: 0;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+
+body.dark-mode {
+    background-color: #181818;
+    color: #e0e0e0;
 }
 
-/* Profile Header Styling */
 .profile-header {
     background-color: #ffffff;
     padding: 0;
+}
+
+body.dark-mode .profile-header {
+    background-color: #282828;
 }
 
 .profile-banner img {
@@ -73,6 +156,10 @@
     max-width: 800px;
 }
 
+body.dark-mode .profile-info-container {
+    background-color: #282828;
+}
+
 .profile-info {
     display: flex;
     align-items: center;
@@ -88,8 +175,8 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.profile-details {
-    flex: 1;
+body.dark-mode .profile-picture img {
+    border: 4px solid #282828;
 }
 
 .profile-details h2 {
@@ -103,47 +190,20 @@
     margin-top: 5px;
 }
 
+body.dark-mode .profile-details .username {
+    color: #88aaff;
+}
+
 .profile-details .self-introduction {
     font-size: 16px;
     color: #555;
     margin-top: 10px;
 }
 
-/* Follow Buttons */
-.follow {
-    text-align: center;
-    margin-top: 20px;
+body.dark-mode .profile-details .self-introduction {
+    color: #bbbbbb;
 }
 
-.follow-btn, .unfollow-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    margin: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.follow-btn {
-    background-color: #0061F2;
-    color: white;
-}
-
-.follow-btn:hover {
-    background-color: #004bbf;
-}
-
-.unfollow-btn {
-    background-color: #ff4d4d;
-    color: white;
-}
-
-.unfollow-btn:hover {
-    background-color: #cc0000;
-}
-
-/* Post Section Styling */
 .posts {
     max-width: 600px;
     margin: 30px auto;
@@ -157,87 +217,78 @@
     padding: 20px;
 }
 
+body.dark-mode .post {
+    background-color: #282828;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
 .post-header {
     font-size: 14px;
     color: #777;
     margin-bottom: 10px;
 }
 
-.post textarea {
-    width: 100%;
-    height: 100px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    resize: none;
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
-    color: #333;
+body.dark-mode .post-header {
+    color: #aaaaaa;
 }
+body.dark-mode .navbar {
+        background-color: #313131;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #313131;
+    }
 
-.post textarea:focus {
-    outline: none;
-    border-color: #0061F2;
-}
+    body.dark-mode .navbar ul li {
+        margin-right: 20px;
+        padding-left: 0; /* Remove any padding to the left of the list items */
+    }
 
-/* Post Actions (Like, Comment, Share Buttons) */
-.post-actions {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-around;
-}
+    body.dark-mode .navbar ul li a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+    }
 
-.post-actions button {
-    background-color: transparent;
-    border: none;
-    font-size: 14px;
-    color: #0061F2;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
+    body.dark-mode .hello a {
+        margin-left: 10px;
+    }
 
-.post-actions button:hover {
-    color: #004bbf;
-}
-    .post-body, .self-introduction {
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #333;
-    margin-top: 10px;
-}
+    body.dark-mode .hello {
+        color: #ffffff;
+    }
 
-.post-body h1, .self-introduction h1 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+    body.dark-mode .dropdown-content { 
+        display: none;
+        position: absolute;
+        background-color: #313131;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        right: 0;
+    }
 
-.post-body h2, .self-introduction h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
+    body.dark-mode .dropdown:hover .dropdown-content {
+        display: block;
+    }
 
-.post-body p, .self-introduction p {
-    margin: 10px 0;
-}
-
-.post-body a, .self-introduction a {
-    color: #0061F2;
-    text-decoration: none;
-}
-
-.post-body a:hover, .self-introduction a:hover {
-    text-decoration: underline;
-}
-
-.post-body ul, .self-introduction ul {
-    margin: 10px 0;
-    padding-left: 20px;
-}
-
-.post-body li, .self-introduction li {
-    margin: 5px 0;
-}
 </style>
+<script>
+const btn = document.querySelector(".btn-toggle");
+
+const currentTheme = localStorage.getItem("theme");
+if (currentTheme == "dark") {
+  document.body.classList.add("dark-mode");
+}
+
+btn.addEventListener("click", function () {
+  document.body.classList.toggle("dark-mode");
+
+  let theme = "light";
+  if (document.body.classList.contains("dark-mode")) {
+    theme = "dark";
+  }
+  localStorage.setItem("theme", theme);
+});
+</script>
